@@ -1,0 +1,44 @@
+name: build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  LLVM_MINGW: llvm-mingw-20261117-ucrt-ubuntu-22.04-x86_64
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build libncurses-dev
+          curl -sL https://github.com/mstorsjo/llvm-mingw/releases/download/20261117/$LLVM_MINGW.tar.xz | tar -xJ -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/$LLVM_MINGW/bin" >> "$GITHUB_PATH"
+
+      - name: Build
+        run: |
+          for preset in default windows-x64 windows-arm64; do
+            cmake --preset $preset && cmake --build --preset $preset
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hexedit-windows-x64
+          path: build/windows-x64/hexedit.exe
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hexedit-windows-arm64
+          path: build/windows-arm64/hexedit.exe
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hexedit-linux-x64
+          path: build/default/hexedit

@@ -20,31 +20,30 @@ Hexedit is a TUI-based hex editor.
 - [Additional Notes](#additional-notes)
 
 ## Building Hexedit
-Hexedit has a single dependency - curses, and uses CMake as the build system.
-To build Hexedit, start from the project root (hexedit) and follow these steps:
+Hexedit needs CMake 3.21+, Ninja, a C++17 compiler and curses.
+On Windows, [PDCurses](https://github.com/wmcbrine/PDCurses) is downloaded and linked statically, so the result is a single `hexedit.exe`.
 
-**Building Hexedit with CMake**
-
-Download [n]curses and CMake:
+**Linux / macOS**
 ```sh
-sudo apt-get install libncurses5-dev libncursesw5-dev
-sudo apt-get install cmake
+sudo apt-get install cmake ninja-build libncurses-dev   # or: brew install cmake ninja
+cmake --preset default
+cmake --build --preset default    # -> build/default/hexedit
 ```
 
-Build Hexedit:
-```sh
-# currently in hexedit
-mkdir build
-cd build
-cmake ..   # this process will take some time
-make       # so will this
+**Windows (x64 and ARM64)**
+
+Install the tools once (LLVM-MinGW builds for both architectures from any Windows machine):
+```powershell
+winget install Kitware.CMake Ninja-build.Ninja MartinStorsjo.LLVM-MinGW.UCRT
 ```
 
-**Building Hexedit manually**
+Then, in a new terminal:
+```powershell
+cmake --preset windows-x64   ; cmake --build --preset windows-x64     # -> build\windows-x64\hexedit.exe
+cmake --preset windows-arm64 ; cmake --build --preset windows-arm64   # -> build\windows-arm64\hexedit.exe
+```
 
-While building Hexedit manually, or with some other build system, take care of these things:
-- The final executable should be linked with curses (`g++ -lcurses ...`).
-- It is recommended to use `-Wall`, `-Wextra` and `-pedantic` compiler options.
+GitHub Actions builds Linux, Windows x64 and Windows ARM64 binaries for every pull request and push to `master` (see the workflow artifacts).
 
 ## Usage
 To use Hexedit, provide the file name or the path to the file as a command line argument.
@@ -112,9 +111,7 @@ Following are the inputs for edit mode:
 ### Examples
 **Running without any arguments:**
 ```sh
-# in hexedit
-cd bin
-./hexedit
+./build/default/hexedit
 ```
 Output:
 ```
@@ -126,9 +123,7 @@ Use option '-h' or --help' to get complete help.
 
 **Running with a valid readable file:**
 ```sh
-# in hexedit
-cd bin
-./hexedit hexedit
+./build/default/hexedit build/default/hexedit
 ```
 Output:
 ```

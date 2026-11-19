@@ -22,7 +22,7 @@ inline void moveLeft(int n = 1) {
 }
 
 inline int printw(std::string str) {
-    return printw(str.c_str());
+    return printw("%s", str.c_str());
 }
 
 #endif

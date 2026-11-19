@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 #include <utility>      //for std::pair
 
 using std::string;
