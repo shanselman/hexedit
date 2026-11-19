@@ -3,6 +3,7 @@ name: build
 on:
   push:
     branches: [master]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
 
@@ -27,18 +28,29 @@ jobs:
           for preset in default windows-x64 windows-arm64; do
             cmake --preset $preset && cmake --build --preset $preset
           done
+          mkdir dist
+          cp build/windows-x64/hexedit.exe   dist/hexedit-windows-x64.exe
+          cp build/windows-arm64/hexedit.exe dist/hexedit-windows-arm64.exe
+          cp build/default/hexedit           dist/hexedit-linux-x64
 
       - uses: actions/upload-artifact@v4
         with:
-          name: hexedit-windows-x64
-          path: build/windows-x64/hexedit.exe
+          name: hexedit
+          path: dist/*
 
-      - uses: actions/upload-artifact@v4
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
         with:
-          name: hexedit-windows-arm64
-          path: build/windows-arm64/hexedit.exe
+          name: hexedit
+          path: dist
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: hexedit-linux-x64
-          path: build/default/hexedit
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes

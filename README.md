@@ -5,6 +5,7 @@ Hexedit is a TUI-based hex editor.
 
 # Table of Contents
 - [Building Hexedit](#building-hexedit)
+- [Download](#download)
 - [Usage](#usage)
   - [Main screen](#main-screen)
   - [Navigation](#navigation)
@@ -44,6 +45,16 @@ cmake --preset windows-arm64 ; cmake --build --preset windows-arm64   # -> build
 ```
 
 GitHub Actions builds Linux, Windows x64 and Windows ARM64 binaries for every pull request and push to `master` (see the workflow artifacts).
+
+## Download
+Prebuilt binaries are on the [Releases page](https://github.com/shanselman/hexedit/releases/latest):
+`hexedit-windows-x64.exe`, `hexedit-windows-arm64.exe` and `hexedit-linux-x64`. No install needed; just download and run.
+
+**Making a release:** push a version tag and CI builds and publishes the release automatically.
+```sh
+git tag v1.0.0
+git push origin v1.0.0
+```
 
 ## Usage
 To use Hexedit, provide the file name or the path to the file as a command line argument.
